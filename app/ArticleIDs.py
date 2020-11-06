@@ -12,6 +12,7 @@ def initArticleIdsRoutes(self):
     def getArticleIDs():
         return self.getIDs()
 
+
 class ArticleIDs(object): 
     def __init__(self):
         super().__init__()
