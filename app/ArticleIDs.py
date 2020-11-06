@@ -6,8 +6,6 @@ linksArticleIDs = {
 }
 
 
-
-
 def initArticleIdsRoutes(self):
     @app.route( linksArticleIDs['getArticleIDs'], methods=['POST'])
     @string
