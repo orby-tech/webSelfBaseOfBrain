@@ -1,5 +1,8 @@
 from app import app
 from app.decorators import string
+
+from app.dbConnector import getArticlesIDs, updateArticleName, addArticleID
+
 linksArticleIDs = {
     'getArticleIDs' : '/ids/getArticleIDs',
 
@@ -16,22 +19,11 @@ def initArticleIdsRoutes(self):
 class ArticleIDs(object): 
     def __init__(self):
         super().__init__()
-
-        self.ids = {
-            '1': 'Первая',
-            '2': 'Second'
-        }
-
-        try:
-            #loading articles from db
-            pass
-        except:
-            pass
-
         initArticleIdsRoutes(self)
 
     def getIDs(self):
-        return self.ids
+        print(dict(getArticlesIDs()))
+        return dict(getArticlesIDs())
 
     def deleteId(self):
         pass
