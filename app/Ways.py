@@ -1,5 +1,9 @@
 from app import app
 from app.decorators import string
+import json
+
+from app.dbConnector import addWay, getWays
+
 linksWays = {
     'getWays' : '/ways/getWays',
 
@@ -18,7 +22,7 @@ class Ways(object):
         super().__init__()
 
         self.ways =  { 
-            'root': {
+            '0': {
                 'childs': ['1', '2', '3'],
                 'articles': [ '1', '2', '3', '4', '5', '6' ]
             },
@@ -39,6 +43,12 @@ class Ways(object):
                 'articles': []
             }},
         
+        # import json
+        # for i in self.ways:
+        #     for j in [*i]:
+        #         print(j)
+        #         addWay(j, json.dumps(i[j]['childs']), json.dumps(i[j]['articles']))
+
 
         try:
             #loading articles from db
@@ -49,7 +59,15 @@ class Ways(object):
         initWaysRoutes(self)
 
     def getWays(self):
-        return self.ways
+        ways = dict()
+        for i in getWays():
+            ways[i[0]] = { 
+                'childs': json.loads(i[1]),
+                'articles': json.loads(i[2])
+            }
+        print(ways)
+
+        return [ways]
 
     def deleteWay(self):
         pass

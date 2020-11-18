@@ -108,6 +108,29 @@ def getWaysIDs():
     except Exception:
         return 'error'
 
+# db WaysIDs
+def addWay(id: int, childs: str, articles: str):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''insert into ways values(?, ?, ?)''', (int(id), str(childs), str(articles)))
+        con.commit()    
+        con.close()
+    except Exception:
+        return 'error'
+    return 'good'
 
+
+def getWays():
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        print(id)
+        cursor.execute('''select * from ways''')
+        answer = cursor.fetchall()
+        con.close()
+        return answer
+    except Exception:
+        return 'error'
 
 # cursor.execute('''delete * from articles''')

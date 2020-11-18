@@ -1,7 +1,7 @@
 <template>
-  <div class="way">
+  <div class="way" :key="contextMenuShow">
       <div class="header">
-        <p v-bind:class="{ noDisplay: width < 10 }">{{ store.state.waysIds[id] || id }}</p>
+        <p @contextmenu="handler($event)" v-bind:class="{ noDisplay: width < 10 }">{{ store.state.waysIds[id] || id }}</p>
         <div class="lisOfArticles" v-bind:class="{ noDisplay: width < 30 }">
             <div class="article"
                 v-for="i in ( store.state.ways[id] ? store.state.ways[id].articles.slice(0,3) : [])" 
@@ -13,7 +13,7 @@
             </div>
         </div>
       </div>
-      
+
     <div 
         class="grid" 
         v-bind:style="{ 
@@ -25,7 +25,8 @@
             v-bind:id="i"  
             v-bind:width="width / store.state.ways[id].childs.length" />
     </div>
-   
+    
+
   </div>
 </template>
 
@@ -41,12 +42,20 @@ export default class Way extends Vue {
     @Prop() private id!: string;
     @Prop() private width!: number;
       store = store
-
+    private contextMenuShow = false
     private selectArticle = (i:string) => {
         this.store.commit('setWaysMode', false)
         this.store.commit('setSelectedArticle', i)
     }
-
+    private handler = (event: any)=> {
+        let x = event.clientX > 100 ? event.clientX : 100
+            x = x < (window.innerWidth - 200) ? x : (window.innerWidth - 200) 
+        let y = event.clientY > 100 ? event.clientY : 100
+            y = y < (window.innerHeight - 200) ? y : (window.innerHeight - 200)             
+        this.store.commit('setContextShow', { id: this.id, x: x, y: y })
+        console.log(this.store.state.showHideContextMenu)
+        event.preventDefault()
+    }
 }
 
 </script>

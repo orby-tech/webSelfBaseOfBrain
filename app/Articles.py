@@ -31,7 +31,6 @@ class Articles(object):
         initArticlesRoutes(self)
 
     def getArticle(self, id):
-        print(getArticle(id))
         return getArticle(id)[0][1]
 
     def deleteArticle(self):

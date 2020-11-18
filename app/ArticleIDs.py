@@ -22,7 +22,6 @@ class ArticleIDs(object):
         initArticleIdsRoutes(self)
 
     def getIDs(self):
-        print(dict(getArticlesIDs()))
         return dict(getArticlesIDs())
 
     def deleteId(self):

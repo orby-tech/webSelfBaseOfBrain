@@ -10,6 +10,7 @@ interface Store {
   articlesIds: object,
   waysMode: boolean,
   selectedArticle: string,
+  showHideContextMenu: object | null
 }
 
 
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     articlesIds: {},
     waysMode : true,
     selectedArticle: '',
+    showHideContextMenu: { id: null, x: 0, y: 0 }
   },
   mutations: {
     setWays( state: Store, arg ) { state.ways = arg },
@@ -28,6 +30,7 @@ export default new Vuex.Store({
     setArticlesIDs( state: Store, arg ) { state.articlesIds = arg },
     setWaysMode( state: Store, arg ) { state.waysMode = arg },
     setSelectedArticle( state: Store, arg ) { state.selectedArticle = arg },    
+    setContextShow(state: Store, arg) { state.showHideContextMenu = arg}
   },
   actions: {
 
