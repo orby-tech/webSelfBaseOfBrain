@@ -1,12 +1,11 @@
 from app import app
 from app.decorators import string
+
+from app.dbConnector import addWaysID, getWaysIDs, updateWaysName
+
 linksIDs = {
     'getWaysIds' : '/ids/getWaysIds',
-
 }
-
-
-
 
 def initWaysIdsRoutes(self):
     @app.route( linksIDs['getWaysIds'], methods=['POST'])
@@ -17,22 +16,10 @@ def initWaysIdsRoutes(self):
 class WaysIds(object): 
     def __init__(self):
         super().__init__()
-
-        self.ids = {
-            'root' : 'Разделы',
-            '1': '1',
-        }
-
-        try:
-            #loading articles from db
-            pass
-        except:
-            pass
-
         initWaysIdsRoutes(self)
 
     def getIDs(self):
-        return self.ids
+        return dict(getWaysIDs())
 
     def deleteId(self):
         pass
