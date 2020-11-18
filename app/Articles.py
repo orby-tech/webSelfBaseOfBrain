@@ -2,8 +2,13 @@ from app import app
 from app.decorators import string
 from flask import request, jsonify
 
+
+from app.dbConnector import addArticle, getArticle, updateArticle
+
+
 linksArticles = {
     'getArticle' : '/article/getArticle',
+    'updateArticle': '/article/updateArticle'
 
 }
 
@@ -16,34 +21,29 @@ def initArticlesRoutes(self):
     @string
     def getArticle():
         data = request.get_json()
-        print(request)
-        id = data["id"]
-        return self.getArticle(id)
+        return self.getArticle(data["id"])
+
+    @app.route( linksArticles['updateArticle'], methods=['POST'])
+    @string
+    def updateArticle():
+        data = request.get_json()
+        return self.updateArticle(data['id'], data['text'])
 
 
 class Articles(object): 
     def __init__(self):
         super().__init__()
-
-        self.articles = {
-            '1': '111',
-            '2': '222',
-            '333': '333'
-        }
-
-        try:
-            #loading articles from db
-            pass
-        except:
-            pass
-
         initArticlesRoutes(self)
 
     def getArticle(self, id):
-        return self.articles[id]
+        print(getArticle(id)[0][1])
+        return getArticle(id)[0][1]
 
     def deleteArticle(self):
         pass
 
     def addArticle(self):
         pass
+
+    def updateArticle(self, id, text):
+        return updateArticle(id, text)    
