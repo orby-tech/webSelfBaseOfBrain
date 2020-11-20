@@ -120,6 +120,16 @@ def addWay(id: int, childs: str, articles: str):
         return 'error'
     return 'good'
 
+def updateChildsWay(id: int, childs: str):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''update ways set childs=? where id=?''', (str(childs), int(id)))
+        con.commit()    
+        con.close()
+    except Exception:
+        return 'error'
+    return 'good'
 
 def getWays():
     try:

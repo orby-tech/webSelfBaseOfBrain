@@ -24,5 +24,5 @@ class WaysIds(object):
     def deleteId(self):
         pass
 
-    def addId(self):
-        pass
+    def addId(self, name: str, id: int):
+        addWaysID(id, name)

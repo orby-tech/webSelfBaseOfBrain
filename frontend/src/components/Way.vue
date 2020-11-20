@@ -1,13 +1,13 @@
 <template>
-  <div class="way" :key="contextMenuShow">
+  <div class="way" :key="contextMenuShow" @click="selectWay" @wheel="wheelSelectWay">
       <div class="header">
-        <p @contextmenu="handler($event)" v-bind:class="{ noDisplay: width < 10 }">{{ store.state.waysIds[id] || id }}</p>
+        <p @contextmenu="handler($event)" v-bind:class="{ noDisplay: width < 5 }">{{ store.state.waysIds[id] || id }}</p>
         <div class="lisOfArticles" v-bind:class="{ noDisplay: width < 30 }">
             <div class="article"
                 v-for="i in ( store.state.ways[id] ? store.state.ways[id].articles.slice(0,3) : [])" 
                 :key='i' 
                 v-bind:id="i"  
-                @click="selectArticle(i)"
+                @click="selectArticle($event, i)"
                 v-bind:width="width / store.state.ways[id].childs.length">
                 {{store.state.articlesIds[i] || i}}
             </div>
@@ -16,6 +16,7 @@
 
     <div 
         class="grid" 
+        v-bind:class="{ noDisplay: width < 5 }"
         v-bind:style="{ 
             gridTemplateColumns : 'repeat( ' + (store.state.ways[id] ? store.state.ways[id].childs.length : 1 ) + ', 1fr )' 
             }"> 
@@ -43,9 +44,10 @@ export default class Way extends Vue {
     @Prop() private width!: number;
       store = store
     private contextMenuShow = false
-    private selectArticle = (i:string) => {
+    private selectArticle = (e, i:string) => {
         this.store.commit('setWaysMode', false)
         this.store.commit('setSelectedArticle', i)
+        e.stopPropagation()
     }
     private handler = (event: any)=> {
         let x = event.clientX > 100 ? event.clientX : 100
@@ -55,6 +57,22 @@ export default class Way extends Vue {
         this.store.commit('setContextShow', { id: this.id, x: x, y: y })
         console.log(this.store.state.showHideContextMenu)
         event.preventDefault()
+    }
+    private selectWay(e){
+        //console.log(this.id)
+        if (this.store.state.ways[this.store.state.selectedWay[0]].childs.includes(this.id) ) {
+            console.log(this.id)
+            this.store.commit('setSelectedWay', [this.id, ...this.store.state.selectedWay])
+        }
+        //e.stopPropagation()
+    }
+    private wheelSelectWay (e) {
+        if ( !this.store.state.waysMode) return
+        if (e.deltaY > 0 ) {
+            if (this.store.state.ways[this.store.state.selectedWay[0]].childs.includes(this.id) ) {
+                this.store.commit('setSelectedWay', [this.id, ...this.store.state.selectedWay])
+            }
+        }
     }
 }
 
@@ -71,8 +89,8 @@ export default class Way extends Vue {
 }
 .header {
     border: 1px solid rgba(184, 182, 182, 0.582);
-    padding: 10px;
-    border-radius: 10px;
+    padding: 5px;
+    border-radius: 5px;
 }
 .article {
     font-size: 70%;
