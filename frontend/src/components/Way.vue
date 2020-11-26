@@ -4,7 +4,7 @@
         <p @contextmenu="handler($event)" v-bind:class="{ noDisplay: width < 5 }">{{ store.state.waysIds[id] || id }}</p>
         <div class="lisOfArticles" v-bind:class="{ noDisplay: width < 30 }">
             <div class="article"
-                v-for="i in ( store.state.ways[id] ? store.state.ways[id].articles.slice(0,3) : [])" 
+                v-for="i in ( store.state.ways[id] ? store.state.ways[id].articles: [])" 
                 :key='i' 
                 v-bind:id="i"  
                 @click="selectArticle($event, i)"

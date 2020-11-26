@@ -27,5 +27,5 @@ class ArticleIDs(object):
     def deleteId(self):
         pass
 
-    def addId(self):
-        pass
+    def addId(self, name: str, id: int):
+        addArticleID(id, name)

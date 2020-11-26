@@ -29,3 +29,14 @@ def addWay():
     waysIds.addId(name, newId)
     ways.addWay(parentId, name, newId)
     return "good"
+
+@app.route( '/addArticle', methods=['POST'])
+def addArticle__routes():
+    data = request.get_json()
+    name = str(data['name'])
+    parentId = int(data['id'])
+    newId = randint(1000000000,9999999999)
+    articlesIds.addId(name, newId)
+    articles.addArticle( newId )
+    ways.addArticles( parentId, newId)
+    return "good"

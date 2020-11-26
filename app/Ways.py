@@ -2,7 +2,7 @@ from app import app
 from app.decorators import string
 import json
 
-from app.dbConnector import addWay, getWays, updateChildsWay
+from app.dbConnector import addWay, getWays, updateChildsWay, updateArticlesWay
 
 linksWays = {
     'getWays' : '/ways/getWays',
@@ -81,3 +81,15 @@ class Ways(object):
         childs = json.dumps(ways[str(parentID)]['childs'])
         updateChildsWay(parentID, childs)
         addWay(id, json.dumps([]), json.dumps([]))
+
+    def addArticles(self, parentID: int, id: int):
+        ways = dict()
+        for i in getWays():
+            ways[str(i[0])] = { 
+                'childs': json.loads(i[1]),
+                'articles': json.loads(i[2])
+            }        
+        ways[str(parentID)]['articles'].append(id)
+        articles = json.dumps(ways[str(parentID)]['articles'])
+        updateArticlesWay(parentID, articles)
+        addWay(id, json.dumps([]), json.dumps([]))        

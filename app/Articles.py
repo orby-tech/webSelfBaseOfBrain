@@ -36,8 +36,8 @@ class Articles(object):
     def deleteArticle(self):
         pass
 
-    def addArticle(self):
-        pass
+    def addArticle(self, id: int):
+        addArticle(id, '')
 
     def updateArticle(self, id, text):
         return updateArticle(id, text)    

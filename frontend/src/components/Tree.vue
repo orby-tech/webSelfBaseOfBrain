@@ -1,5 +1,5 @@
 <template>
-  <div class="hello"  @wheel="wheelSelectWay">
+  <div class="hello"  @wheel="wheelSelectWay" v-if="renderComponent">
     <ul 
     :key='store.state.showHideContextMenu.id'
       v-bind:class="{noDisplay: store.state.showHideContextMenu.id === null }" 
@@ -10,8 +10,8 @@
         }">
 
       <li ><button @click="showHideAddWayDialog(false)"> add way </button></li>
-      <li ><button> add article </button></li>
-      <li ><button  @click="showHideDeleteDialog(false)"> delete </button></li>
+      <li ><button @click="showHideAddArticleDialog(false)"> add article </button></li>
+      <li ><button @click="showHideDeleteDialog(false)"> delete </button></li>
       <li ><button> move </button></li>
     </ul>
     <Way v-bind:id="store.state.selectedWay[0]"  v-bind:width="width"  v-bind:class="{ noDisplay: !store.state.waysMode }"/>
@@ -26,12 +26,18 @@
       <button @click="addWayButton"> Add </button>
     </dialog>    
 
+    <dialog class="addArticle" ref="addArticleDialog">
+      <button class="close"><img :src="close"  @click="showHideAddArticleDialog(true)"></button>
+      <label for="addArticleName"> Name of Article: </label>
+      <input id="addArticleName" ref="addArticleName" type='text'>
+      <button @click="addArticleButton"> Add </button>
+    </dialog>  
+
     <dialog class="delete" ref="deleteDialog">
       <button class="close"><img :src="close"  @click="showHideDeleteDialog(true)"></button>
       Вы уверены?
       <button @click="showHideDeleteDialog(true)"> Да </button>
     </dialog>
-
   </div>
 </template>
 
@@ -59,6 +65,7 @@ export default class Tree extends Vue {
   width = window.innerWidth
   close = close
   id = -1
+  renderComponent = true
 
   private mounted (){
     this.loadingAll()
@@ -87,21 +94,45 @@ export default class Tree extends Vue {
     this.store.commit('setArticlesIDs', answer)
   }
 
-  private addWayButton() {
-    ax('/addWay', {name: this.$refs.addWayName.value, id: this.id})
+  private async addWayButton() {
+    await ax('/addWay', {name: this.$refs.addWayName.value, id: this.id})
     this.showHideAddWayDialog(true)
     this.loadingAll()
   }
-
+  private async addArticleButton(){
+    await ax('/addArticle', {name: this.$refs.addArticleName.value, id: this.id})
+    this.renderComponent = false
+    this.showHideAddArticleDialog(true)
+    this.loadingAll()
+    this.width = window.innerWidth
+    this.renderComponent = true
+  }
   private showHideAddWayDialog(arg){
     if (arg){
       this.$refs.addWayDialog.close()
     }
     else{
+      if ( this.store.state.ways[this.store.state.showHideContextMenu.id].childs.length >= 5) {
+        alert("Sorry, not more 5 ways in one")
+        return
+      }
       this.$refs.addWayDialog.show()   
       this.id =   this.store.state.showHideContextMenu.id
     }
   }  
+  private showHideAddArticleDialog(arg) {
+    if (arg){
+      this.$refs.addArticleDialog.close()
+    }
+    else{
+      if ( this.store.state.ways[this.store.state.showHideContextMenu.id].articles.length >= 5) {
+        alert("Sorry, not more 5 articles in one")
+        return
+      }
+      this.$refs.addArticleDialog.show()   
+      this.id =   this.store.state.showHideContextMenu.id
+    }
+  }
   private showHideDeleteDialog(arg){
     if (arg){
       this.$refs.deleteDialog.close()
