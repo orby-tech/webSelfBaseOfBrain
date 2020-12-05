@@ -13,6 +13,7 @@
       <li ><button @click="showHideAddArticleDialog(false)"> add article </button></li>
       <li ><button @click="showHideDeleteDialog(false)"> delete </button></li>
       <li ><button> move </button></li>
+      <li ><button> Rename </button></li>
     </ul>
     <ul 
     :key='store.state.showHideContextMenu.id'
@@ -24,6 +25,7 @@
         }">
       <li ><button @click="showHideDeleteArticleDialog(false)"> delete </button></li>
       <li ><button> move </button></li>
+      <li @click="showHideRenameArticleDialog(false)"><button> Rename </button></li>
     </ul>    
     <Way v-bind:id="store.state.selectedWay[0]"  v-bind:width="width"  v-bind:class="{ noDisplay: !store.state.waysMode }"/>
 
@@ -43,6 +45,13 @@
       <input id="addArticleName" ref="addArticleName" type='text'>
       <button @click="addArticleButton"> Add </button>
     </dialog>  
+
+    <dialog class="renameArticle" ref="renameArticleDialog">
+      <button class="close"><img :src="close"  @click="showHideRenameArticleDialog(true)"></button>
+      <label for="renameArticleName"> Name of Article: </label>
+      <input id="renameArticleName" ref="renameArticleName" type='text'>
+      <button @click="renameArticleButton"> Rename </button>
+    </dialog> 
 
     <dialog class="delete" ref="deleteDialog">
       <button class="close"><img :src="close"  @click="showHideDeleteArticleDialog(true)"></button>
@@ -119,6 +128,14 @@ export default class Tree extends Vue {
     this.width = window.innerWidth
     this.renderComponent = true
   }
+  private async renameArticleButton () {
+    await ax('/renameArticle', {name: this.$refs.renameArticleName.value, id: this.id})
+    this.renderComponent = false
+    this.showHideRenameArticleDialog(true)
+    this.loadingAll()
+    this.width = window.innerWidth
+    this.renderComponent = true
+  }
   private showHideAddWayDialog(arg){
     if (arg){
       this.$refs.addWayDialog.close()
@@ -161,6 +178,15 @@ export default class Tree extends Vue {
     else{
       this.$refs.deleteDialog.show()   
       this.delComponent = { id: this.store.state.showHideContextMenu.id,  article: !!this.store.state.showHideContextMenu.article}    
+    }
+  }
+  private showHideRenameArticleDialog(arg){
+    if (arg){
+      this.$refs.renameArticleDialog.close()
+    }
+    else{
+      this.$refs.renameArticleDialog.show()    
+      this.id =   this.store.state.showHideContextMenu.id
     }
   }
     private wheelSelectWay (e) {

@@ -2,7 +2,7 @@
   <div class="way" :key="contextMenuShow" @click="selectWay" @wheel="wheelSelectWay">
       <div class="header">
         <p @contextmenu="handler($event)" v-bind:class="{ noDisplay: width < 5 }">{{ store.state.waysIds[id] || id }}</p>
-        <div class="lisOfArticles" v-bind:class="{ noDisplay: width < 30 }">
+        <div class="lisOfArticles" v-bind:class="{ noDisplay: width < 5 }">
             <div class="article"
                 v-for="i in ( store.state.ways[id] ? store.state.ways[id].articles: [])" 
                 :key='i' 
