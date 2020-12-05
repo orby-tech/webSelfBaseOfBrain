@@ -40,3 +40,11 @@ def addArticle__routes():
     articles.addArticle( newId )
     ways.addArticles( parentId, newId)
     return "good"
+
+@app.route( '/deleteArticle', methods=['POST'])
+def deleteArticle__routes():
+    id = str(request.get_json()['id'])
+    articles.deleteArticle(id)
+    articlesIds.deleteID(id)
+    ways.deleteArticles(id)
+    return id    

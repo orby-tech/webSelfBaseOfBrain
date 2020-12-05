@@ -19,9 +19,11 @@ def updateArticle(id: int, text: str):
         con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
         cursor = con.cursor()
         cursor.execute('''update articles set id=?, text=? where id=?''', (int(id), str(text), int(id)))
+        print(int(id), str(text))
         con.commit()    
         con.close()
-    except Exception:
+    except Exception as e:
+        print(e)
         return 'error'
     return 'good'
 
@@ -37,6 +39,16 @@ def getArticle(id: int):
     except Exception:
         return 'error'
 
+def delArticle(id: int):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''delete from articles where id=?''', (int(id),))
+        con.commit()    
+        con.close()
+        return "good"
+    except Exception:
+        return 'error'
 
 # db ArticlesIDs
 def addArticleID(id: int, name: str):
@@ -72,6 +84,18 @@ def getArticlesIDs():
         return answer
     except Exception:
         return 'error'
+
+def delArticleID(id: int):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''delete from articlesIDs where id=?''', (int(id),))
+        con.commit()    
+        con.close()
+        return "good"
+    except Exception:
+        return 'error'
+
 
 # db WaysIDs
 def addWaysID(id: int, name: str):

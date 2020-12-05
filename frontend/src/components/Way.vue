@@ -8,6 +8,7 @@
                 :key='i' 
                 v-bind:id="i"  
                 @click="selectArticle($event, i)"
+                @contextmenu="handlerArticles($event, i)"
                 v-bind:width="width / store.state.ways[id].childs.length">
                 {{store.state.articlesIds[i] || i}}
             </div>
@@ -44,7 +45,7 @@ export default class Way extends Vue {
     @Prop() private width!: number;
       store = store
     private contextMenuShow = false
-    private selectArticle = (e, i:string) => {
+    private selectArticle = (e:any, i:string) => {
         this.store.commit('setWaysMode', false)
         this.store.commit('setSelectedArticle', i)
         e.stopPropagation()
@@ -58,7 +59,16 @@ export default class Way extends Vue {
         console.log(this.store.state.showHideContextMenu)
         event.preventDefault()
     }
-    private selectWay(e){
+    private handlerArticles = (e, id) => {
+        let x = event.clientX > 100 ? event.clientX : 100
+            x = x < (window.innerWidth - 200) ? x : (window.innerWidth - 200) 
+        let y = event.clientY > 100 ? event.clientY : 100
+            y = y < (window.innerHeight - 200) ? y : (window.innerHeight - 200)             
+        this.store.commit('setContextShow', { id: id, x: x, y: y, article: true })
+        console.log(this.store.state.showHideContextMenu)
+        event.preventDefault()       
+    }
+    private selectWay(e:any){
         //console.log(this.id)
         if (this.store.state.ways[this.store.state.selectedWay[0]].childs.includes(this.id) ) {
             console.log(this.id)
@@ -66,7 +76,7 @@ export default class Way extends Vue {
         }
         //e.stopPropagation()
     }
-    private wheelSelectWay (e) {
+    private wheelSelectWay (e:any) {
         if ( !this.store.state.waysMode) return
         if (e.deltaY > 0 ) {
             if (this.store.state.ways[this.store.state.selectedWay[0]].childs.includes(this.id) ) {

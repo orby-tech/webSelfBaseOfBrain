@@ -2,7 +2,7 @@
   <div class="hello"  @wheel="wheelSelectWay" v-if="renderComponent">
     <ul 
     :key='store.state.showHideContextMenu.id'
-      v-bind:class="{noDisplay: store.state.showHideContextMenu.id === null }" 
+      v-bind:class="{noDisplay: store.state.showHideContextMenu.id === null || store.state.showHideContextMenu.article }" 
       @mouseleave="closeContext"
       v-bind:style="{
         left: (store.state.showHideContextMenu.x - 100) + 'px', 
@@ -14,6 +14,17 @@
       <li ><button @click="showHideDeleteDialog(false)"> delete </button></li>
       <li ><button> move </button></li>
     </ul>
+    <ul 
+    :key='store.state.showHideContextMenu.id'
+      v-bind:class="{noDisplay: store.state.showHideContextMenu.id === null || !store.state.showHideContextMenu.article }" 
+      @mouseleave="closeContext"
+      v-bind:style="{
+        left: (store.state.showHideContextMenu.x - 100) + 'px', 
+        top: (store.state.showHideContextMenu.y - 100 )+ 'px'
+        }">
+      <li ><button @click="showHideDeleteArticleDialog(false)"> delete </button></li>
+      <li ><button> move </button></li>
+    </ul>    
     <Way v-bind:id="store.state.selectedWay[0]"  v-bind:width="width"  v-bind:class="{ noDisplay: !store.state.waysMode }"/>
 
     <Article   v-if="!store.state.waysMode"/>
@@ -34,9 +45,9 @@
     </dialog>  
 
     <dialog class="delete" ref="deleteDialog">
-      <button class="close"><img :src="close"  @click="showHideDeleteDialog(true)"></button>
+      <button class="close"><img :src="close"  @click="showHideDeleteArticleDialog(true)"></button>
       Вы уверены?
-      <button @click="showHideDeleteDialog(true)"> Да </button>
+      <button @click="delItem(true)"> Да </button>
     </dialog>
   </div>
 </template>
@@ -65,6 +76,7 @@ export default class Tree extends Vue {
   width = window.innerWidth
   close = close
   id = -1
+  delComponent = { id: -1,  article: false}
   renderComponent = true
 
   private mounted (){
@@ -138,7 +150,17 @@ export default class Tree extends Vue {
       this.$refs.deleteDialog.close()
     }
     else{
-      this.$refs.deleteDialog.show()     
+      this.$refs.deleteDialog.show()  
+      this.delComponent = { id: this.store.state.showHideContextMenu.id,  article: !!this.store.state.showHideContextMenu.article}   
+    }
+  }
+  private showHideDeleteArticleDialog(arg) {
+    if (arg){
+      this.$refs.deleteDialog.close()
+    }
+    else{
+      this.$refs.deleteDialog.show()   
+      this.delComponent = { id: this.store.state.showHideContextMenu.id,  article: !!this.store.state.showHideContextMenu.article}    
     }
   }
     private wheelSelectWay (e) {
@@ -147,7 +169,18 @@ export default class Tree extends Vue {
           if(this.store.state.selectedWay.length <= 1) return
           this.store.commit('setSelectedWay', [...this.store.state.selectedWay.slice(1)])
       }
-    }  
+    } 
+  private async delItem () {
+    if ( this.delComponent.article ) {
+      await ax('/deleteArticle', {id: this.delComponent.id })
+      this.renderComponent = false
+      this.showHideDeleteArticleDialog(true)
+      this.loadingAll()
+      this.width = window.innerWidth
+      this.renderComponent = true
+    }
+    
+  } 
 }
 </script>
 

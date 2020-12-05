@@ -1,7 +1,7 @@
 from app import app
 from app.decorators import string
 
-from app.dbConnector import getArticlesIDs, updateArticleName, addArticleID
+from app.dbConnector import getArticlesIDs, updateArticleName, addArticleID, delArticleID
 
 linksArticleIDs = {
     'getArticleIDs' : '/ids/getArticleIDs',
@@ -24,8 +24,11 @@ class ArticleIDs(object):
     def getIDs(self):
         return dict(getArticlesIDs())
 
-    def deleteId(self):
-        pass
+    def deleteID(self, id):
+        try:
+            delArticleID(id)
+        except Exception as e:
+            print(31, e)            
 
     def addId(self, name: str, id: int):
         addArticleID(id, name)

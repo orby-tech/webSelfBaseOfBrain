@@ -93,3 +93,28 @@ class Ways(object):
         articles = json.dumps(ways[str(parentID)]['articles'])
         updateArticlesWay(parentID, articles)
         addWay(id, json.dumps([]), json.dumps([]))        
+
+
+    def deleteArticles(self, id: int):
+        ways = dict()
+        for i in getWays():
+            print(i[2])
+            ways[str(i[0])] = { 
+                'childs': json.loads(i[1]),
+                'articles': [int(j) for j in json.loads( i[2])]
+            }
+        print(ways)        
+        for i in ways:
+            try:
+                print(type(ways[i]['articles'][0]), list(ways[i]['articles']))
+            except:
+                pass
+            print(int(id) in list(ways[i]['articles']), id, ways[i]['articles'])
+            if int(id) in list(ways[i]['articles']):
+                print(ways[i]['articles'])
+                ways[i]['articles'].pop(
+                    ways[i]['articles'].index(int(id))
+                )
+                articles = json.dumps(ways[i]['articles'])
+                updateArticlesWay(i, articles)        
+            

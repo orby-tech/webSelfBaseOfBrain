@@ -3,7 +3,7 @@ from app.decorators import string
 from flask import request, jsonify
 
 
-from app.dbConnector import addArticle, getArticle, updateArticle
+from app.dbConnector import addArticle, getArticle, updateArticle, delArticle
 
 linksArticles = {
     'getArticle' : '/article/getArticle',
@@ -31,10 +31,16 @@ class Articles(object):
         initArticlesRoutes(self)
 
     def getArticle(self, id):
-        return getArticle(id)[0][1]
+        try:
+            return getArticle(id)[0][1]
+        except:
+            return ''
 
-    def deleteArticle(self):
-        pass
+    def deleteArticle(self, id):
+        try:
+            delArticle(id)
+        except Exception as e:
+            print(43, e)
 
     def addArticle(self, id: int):
         addArticle(id, '')
