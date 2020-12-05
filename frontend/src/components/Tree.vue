@@ -91,14 +91,18 @@ export default class Tree extends Vue {
   private mounted (){
     this.loadingAll()
   }
+
   private loadingAll(){
+    this.renderComponent = false
     this.getWays()
     this.getWaysIds()
-    this.getArticlesIds()    
+    this.getArticlesIds()  
+    this.width = window.innerWidth
+    this.renderComponent = true  
   }
-  private closeContext(){
-    this.store.commit('setContextShow', { id: null, x: 0, y: 0 })
-  }
+
+  private closeContext(){ this.store.commit('setContextShow', { id: null, x: 0, y: 0 }) }
+
   async getWays(){
     const answer = (await ax( '/ways/getWays' ) ).data.data
     console.log(answer)
@@ -110,6 +114,7 @@ export default class Tree extends Vue {
     const answer = (await ax( '/ids/getWaysIds' ) ).data.data
     this.store.commit('setWaysIDs', answer)
   }
+
   async getArticlesIds(){
     const answer = (await ax( '/ids/getArticleIDs' ) ).data.data
     this.store.commit('setArticlesIDs', answer)
@@ -120,39 +125,33 @@ export default class Tree extends Vue {
     this.showHideAddWayDialog(true)
     this.loadingAll()
   }
+
   private async addArticleButton(){
     await ax('/addArticle', {name: this.$refs.addArticleName.value, id: this.id})
-    this.renderComponent = false
     this.showHideAddArticleDialog(true)
     this.loadingAll()
-    this.width = window.innerWidth
-    this.renderComponent = true
   }
+
   private async renameArticleButton () {
     await ax('/renameArticle', {name: this.$refs.renameArticleName.value, id: this.id})
-    this.renderComponent = false
     this.showHideRenameArticleDialog(true)
     this.loadingAll()
-    this.width = window.innerWidth
-    this.renderComponent = true
   }
+
   private showHideAddWayDialog(arg){
-    if (arg){
-      this.$refs.addWayDialog.close()
-    }
+    if (arg){ this.$refs.addWayDialog.close() }
     else{
       if ( this.store.state.ways[this.store.state.showHideContextMenu.id].childs.length >= 5) {
         alert("Sorry, not more 5 ways in one")
         return
       }
       this.$refs.addWayDialog.show()   
-      this.id =   this.store.state.showHideContextMenu.id
+      this.id = this.store.state.showHideContextMenu.id
     }
   }  
+
   private showHideAddArticleDialog(arg) {
-    if (arg){
-      this.$refs.addArticleDialog.close()
-    }
+    if (arg){ this.$refs.addArticleDialog.close() }
     else{
       if ( this.store.state.ways[this.store.state.showHideContextMenu.id].articles.length >= 5) {
         alert("Sorry, not more 5 articles in one")
@@ -162,40 +161,39 @@ export default class Tree extends Vue {
       this.id =   this.store.state.showHideContextMenu.id
     }
   }
+
   private showHideDeleteDialog(arg){
-    if (arg){
-      this.$refs.deleteDialog.close()
-    }
+    if (arg){ this.$refs.deleteDialog.close() }
     else{
       this.$refs.deleteDialog.show()  
       this.delComponent = { id: this.store.state.showHideContextMenu.id,  article: !!this.store.state.showHideContextMenu.article}   
     }
   }
+
   private showHideDeleteArticleDialog(arg) {
-    if (arg){
-      this.$refs.deleteDialog.close()
-    }
+    if (arg){ this.$refs.deleteDialog.close() }
     else{
       this.$refs.deleteDialog.show()   
       this.delComponent = { id: this.store.state.showHideContextMenu.id,  article: !!this.store.state.showHideContextMenu.article}    
     }
   }
+
   private showHideRenameArticleDialog(arg){
-    if (arg){
-      this.$refs.renameArticleDialog.close()
-    }
+    if (arg){ this.$refs.renameArticleDialog.close() }
     else{
       this.$refs.renameArticleDialog.show()    
       this.id =   this.store.state.showHideContextMenu.id
     }
   }
-    private wheelSelectWay (e) {
-      if ( !this.store.state.waysMode) return
-      if (e.deltaY < 0 ) {
-          if(this.store.state.selectedWay.length <= 1) return
-          this.store.commit('setSelectedWay', [...this.store.state.selectedWay.slice(1)])
-      }
-    } 
+
+  private wheelSelectWay (e) {
+    if ( !this.store.state.waysMode) return
+    if (e.deltaY < 0 ) {
+        if(this.store.state.selectedWay.length <= 1) return
+        this.store.commit('setSelectedWay', [...this.store.state.selectedWay.slice(1)])
+    }
+  } 
+  
   private async delItem () {
     if ( this.delComponent.article ) {
       await ax('/deleteArticle', {id: this.delComponent.id })
@@ -204,8 +202,7 @@ export default class Tree extends Vue {
       this.loadingAll()
       this.width = window.innerWidth
       this.renderComponent = true
-    }
-    
+    }    
   } 
 }
 </script>
