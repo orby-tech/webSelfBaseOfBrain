@@ -13,7 +13,7 @@
       <li ><button @click="showHideAddArticleDialog(false)"> add article </button></li>
       <li ><button @click="showHideDeleteDialog(false)"> delete </button></li>
       <li ><button> move </button></li>
-      <li ><button> Rename </button></li>
+      <li ><button @click="showHideRenameWayDialog(false)"> Rename </button></li>
     </ul>
     <ul 
     :key='store.state.showHideContextMenu.id'
@@ -51,6 +51,13 @@
       <label for="renameArticleName"> Name of Article: </label>
       <input id="renameArticleName" ref="renameArticleName" type='text'>
       <button @click="renameArticleButton"> Rename </button>
+    </dialog> 
+
+    <dialog class="renameWay" ref="renameWayDialog">
+      <button class="close"><img :src="close"  @click="showHideRenameWayDialog(true)"></button>
+      <label for="renameWayName"> Name of Way: </label>
+      <input id="renameWayName" ref="renameWayName" type='text'>
+      <button @click="renameWayButton"> Rename </button>
     </dialog> 
 
     <dialog class="delete" ref="deleteDialog">
@@ -138,6 +145,12 @@ export default class Tree extends Vue {
     this.loadingAll()
   }
 
+  private async renameWayButton () {
+    await ax('/renameWay', {name: this.$refs.renameWayName.value, id: this.id})
+    this.showHideRenameWayDialog(true)
+    this.loadingAll()
+  }
+
   private showHideAddWayDialog(arg){
     if (arg){ this.$refs.addWayDialog.close() }
     else{
@@ -186,6 +199,14 @@ export default class Tree extends Vue {
     }
   }
 
+  private showHideRenameWayDialog(arg) {
+    if (arg){ this.$refs.renameWayDialog.close() }
+    else{
+      this.$refs.renameWayDialog.show()    
+      this.id =   this.store.state.showHideContextMenu.id
+    }
+  }
+
   private wheelSelectWay (e) {
     if ( !this.store.state.waysMode) return
     if (e.deltaY < 0 ) {
@@ -197,12 +218,13 @@ export default class Tree extends Vue {
   private async delItem () {
     if ( this.delComponent.article ) {
       await ax('/deleteArticle', {id: this.delComponent.id })
-      this.renderComponent = false
       this.showHideDeleteArticleDialog(true)
-      this.loadingAll()
-      this.width = window.innerWidth
-      this.renderComponent = true
-    }    
+    }   
+    else {
+      await ax('/deleteWay', {id: this.delComponent.id })
+      this.showHideDeleteArticleDialog(true)
+    } 
+    this.loadingAll()
   } 
 }
 </script>

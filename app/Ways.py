@@ -2,7 +2,7 @@ from app import app
 from app.decorators import string
 import json
 
-from app.dbConnector import addWay, getWays, updateChildsWay, updateArticlesWay
+from app.dbConnector import addWay, getWays, updateChildsWay, updateArticlesWay, deleteWay as delW
 
 linksWays = {
     'getWays' : '/ways/getWays',
@@ -62,33 +62,44 @@ class Ways(object):
         ways = dict()
         for i in getWays():
             ways[str(i[0])] = { 
-                'childs': json.loads(i[1]),
-                'articles': json.loads(i[2])
+                'childs': [int(j) for j in json.loads(i[1])],
+                'articles': [int(j) for j in json.loads( i[2])]
             }
         return ways
 
-    def deleteWay(self):
-        pass
+    def deleteWay(self, id:int):
+        ways = self.getWays()
+        articles = []
+        childs = []        
+        for i in ways:
+            if int(id) == int(i):
+                articles = (ways[i]['articles'])   
+                childs = (ways[i]['childs']) 
+
+        for i in ways:
+            if int(id) in list(ways[i]['childs']):
+                ways[i]['articles'].extend( articles )                               
+                ways[i]['childs'].extend( childs )
+
+                while int(id) in list(ways[i]['childs']):
+                    ways[i]['childs'].pop( ways[i]['childs'].index(int(id)) ) 
+            
+                articles_n = json.dumps(ways[i]['articles'])
+                childs_ = json.dumps(ways[i]['childs'])
+                updateArticlesWay(i, articles_n)    
+                updateChildsWay(i, childs_)    
+        
+        delW(id)
 
     def addWay(self, parentID: int, name: str, id: int):
-        ways = dict()
-        for i in getWays():
-            ways[str(i[0])] = { 
-                'childs': json.loads(i[1]),
-                'articles': json.loads(i[2])
-            }        
+        ways = self.getWays()        
         ways[str(parentID)]['childs'].append(id)
         childs = json.dumps(ways[str(parentID)]['childs'])
         updateChildsWay(parentID, childs)
         addWay(id, json.dumps([]), json.dumps([]))
 
     def addArticles(self, parentID: int, id: int):
-        ways = dict()
-        for i in getWays():
-            ways[str(i[0])] = { 
-                'childs': json.loads(i[1]),
-                'articles': json.loads(i[2])
-            }        
+        ways = self.getWays()       
         ways[str(parentID)]['articles'].append(id)
         articles = json.dumps(ways[str(parentID)]['articles'])
         updateArticlesWay(parentID, articles)
@@ -96,14 +107,7 @@ class Ways(object):
 
 
     def deleteArticles(self, id: int):
-        ways = dict()
-        for i in getWays():
-            print(i[2])
-            ways[str(i[0])] = { 
-                'childs': json.loads(i[1]),
-                'articles': [int(j) for j in json.loads( i[2])]
-            }
-        print(ways)        
+        ways = self.getWays()        
         for i in ways:
             try:
                 print(type(ways[i]['articles'][0]), list(ways[i]['articles']))

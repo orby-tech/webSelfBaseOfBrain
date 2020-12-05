@@ -48,3 +48,10 @@ def deleteArticle__routes():
     articlesIds.deleteID(id)
     ways.deleteArticles(id)
     return id    
+
+@app.route( '/deleteWay', methods=['POST'])
+def deleteWay__routes():
+    id = int(request.get_json()['id'])
+    ways.deleteWay(id)
+    waysIds.deleteId(id)
+    return str(id)

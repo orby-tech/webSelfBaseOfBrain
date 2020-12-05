@@ -1,7 +1,7 @@
 from app import app
 from app.decorators import string
 
-from app.dbConnector import addWaysID, getWaysIDs, updateWaysName
+from app.dbConnector import addWaysID, getWaysIDs, updateWaysName, deleteWaysID
 
 linksIDs = {
     'getWaysIds' : '/ids/getWaysIds',
@@ -21,8 +21,8 @@ class WaysIds(object):
     def getIDs(self):
         return dict(getWaysIDs())
 
-    def deleteId(self):
-        pass
+    def deleteId(self, id: int):
+        return deleteWaysID(id)
 
     def addId(self, name: str, id: int):
         addWaysID(id, name)

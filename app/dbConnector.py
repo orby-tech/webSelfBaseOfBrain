@@ -109,6 +109,17 @@ def addWaysID(id: int, name: str):
         return 'error'
     return 'good'
 
+def deleteWaysID(id: int):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''delete from waysIDs where id=?''', (int(id),))
+        con.commit()    
+        con.close()
+    except Exception:
+        return 'error'
+    return 'good'
+
 def updateWaysName(id: int, name: str):
     try:
         con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
@@ -138,6 +149,17 @@ def addWay(id: int, childs: str, articles: str):
         con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
         cursor = con.cursor()
         cursor.execute('''insert into ways values(?, ?, ?)''', (int(id), str(childs), str(articles)))
+        con.commit()    
+        con.close()
+    except Exception:
+        return 'error'
+    return 'good'
+
+def deleteWay(id: int):
+    try:
+        con = sqlite3.connect("./baseOfBrain/webEditor/app.db")
+        cursor = con.cursor()
+        cursor.execute('''delete from ways where id=?''', (int(id),))
         con.commit()    
         con.close()
     except Exception:
